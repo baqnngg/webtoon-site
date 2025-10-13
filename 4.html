@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>REST API POST 예제</h2>
+    <button id="btn">게시글 등록</button>
+    <pre id="out"></pre>
+
+    <script>
+        document.getElementById("btn").onclick = async () => {
+            const payload = {title: "새 글", "body": "내용", userId: 1};
+            const r = await fetch("https://jsonplaceholder.typicode.com/posts", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(payload)
+            });
+            const d = await r.json();
+            document.getElementById("out").textContent = JSON.stringify(d, null, 2);
+        }
+    </script>
+</body>
+</html>

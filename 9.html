@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open-Meteo 현재 날씨</title>
+</head>
+<body>
+    <h2>현재 날씨 (Open-Meteo, 키 불필요)</h2>
+    <button id="bySeoul">서울로 조회</button>
+    <button id="byChoongJoo">충주로 조회</button>
+    <div id="out" style="margin-top: 10px;"></div>
+
+    <script>
+        async function fetchWeather(lat, lon) {
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+            try{
+                const r = await fetch(url);
+                if (!r.ok) throw new Error('HTTP' + r.status);
+                const d = await r.json();
+                const cw = d.current_weather;
+                document.getElementById("out").innerHTML =
+                    `<b>위도/경도</b>: ${lat.toFixed(4)}, ${lon.toFixed(4)}<br>` +
+                    `<b>시간</b>: ${cw.time}<br>` +
+                    `<b>온도</b>: ${cw.temperature}°C<br>` +
+                    `<b>풍속</b>: ${cw.windspeed}km/h<br>` +
+                    `<b>풍향</b>: ${cw.winddirection}°<br>` +
+                    `<b>날씨 코드</b>: ${cw.weathercode}`;
+            } catch(e) {
+                document.getElementById("out").textContent = "에러 발생: " + e.message;
+            }
+        }
+
+        document.getElementById("bySeoul").onclick = () => fetchWeather(
+            37.5665, 126.9780
+        );
+        document.getElementById("byChoongJoo").onclick = () => fetchWeather(
+            36.9910113, 127.9259497
+        );
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>REST API DELETE 예제</h2>
+    <button id="btn">게시글 삭제</button>
+
+    <script>
+        document.getElementById("btn").onclick = async () => {
+            const r = await fetch("https://jsonplaceholder.typicode.com/posts/1", {
+                method: "DELETE"
+            });
+            alert("응답 코드: " + r.status);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        fetch("https://httpbin.org/get")
+            .then(r => {
+                console.log("상태:", r.status, r.statusText);
+                console.log("헤더:");
+                for (const [k, v] of r.headers) console.log(k + ":", v);
+                return r.json();
+            })
+            .then(d => console.log("본문:", JSON.stringify(d, null, 2)))
+            .catch(e => console.error(e));
+    </script>
+</body>
+</html>
