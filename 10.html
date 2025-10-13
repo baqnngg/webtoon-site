@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>충주시 날씨 * 지도(Open-Meteo + Leaflet)</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <style>
+        #map {width: 100%; height: 350px; margin-top: 10px;}
+        body {font-family: sans-serif; line-height: 1.6;}
+    </style>
+</head>
+<body>
+    <h2>충주시 현재 날씨</h2>
+    <button id="load">날씨 불러오기</button>
+    <div id="weather" style="margin-top: 10px;"></div>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+        const Lat = 36.9723;
+        const Lon = 127.9284;
+
+        const map = L.map('map').setView([Lat, Lon], 11);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        document.getElementById("load").onclick = async () => {
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${Lat}&longitude=${Lon}&current_weather=true`;
+
+            try {
+                const r = await fetch(url);
+                const data = await r.json();
+                const w = data.current_weather;
+                const inf =
+                    `<b>충주시</b><br>` +
+                    `<b>온도</b>: ${w.temperature}°C<br>` +
+                    `<b>풍속</b>: ${w.windspeed}m/s<br>` +
+                    `관측시간(UTC): ${w.time}`;
+                
+                    document.getElementById("weather").innerHTML = inf;
+
+                    L.marker([Lat, Lon])
+                        .addTo(map)
+                        .bindPopup(inf)
+                        .openPopup();
+            } catch (e) {
+                document.getElementById("weather").textContent = "에러 발생: " + e.message;
+            }
+        };
+    </script>
+</body>
+</html>
