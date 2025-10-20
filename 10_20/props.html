@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>props / emits</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+  <div id="app">
+    <h3>props / emits</h3>
+    <p>부모 카운터: {{ total }}</p>
+
+    <counter-button label="+1" @add="total += $event"></counter-button>
+    <counter-button label="+5" :step="5" @add="total += $event"></counter-button>
+  </div>
+
+  <script>
+    const app = Vue.createApp({
+      data: () => ({ total: 0 })
+    });
+
+    app.component('counter-button', {
+      props: {
+        label: { type: String, default: "+1" },
+        step: { type: Number, default: 1 }
+      },
+      emits: ['add'],
+      template: `<button @click="$emit('add', step)">{{ label }}</button>`
+    });
+
+    app.mount('#app');
+  </script>
+</body>
+</html>

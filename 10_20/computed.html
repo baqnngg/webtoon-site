@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>computed 합계</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+  <div id="app">
+    <h3>computed 합계</h3>
+
+    <div v-for="p in products" :key="p.id">
+      {{ p.name }}:
+      <input type="number" v-model.number="p.qty" min="0" style="width: 60px;">
+      x {{ p.price }} = {{ p.qty * p.price }}
+    </div>
+
+    <br>
+    <strong>총합: {{ total }}</strong>
+  </div>
+
+  <script>
+    Vue.createApp({
+      data() {
+        return {
+          products: [
+            { id: 1, name: "웹", price: 500, qty: 1 },
+            { id: 2, name: "노트", price: 1500, qty: 2 }
+          ]
+        };
+      },
+      computed: {
+        total() {
+          // 각 상품의 (가격 × 수량)을 합산
+          return this.products.reduce((sum, p) => sum + p.price * (p.qty || 0), 0);
+        }
+      }
+    }).mount("#app");
+  </script>
+</body>
+</html>

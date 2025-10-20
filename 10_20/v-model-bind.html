@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V-model 최소 예제</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        body {font-family: Arial; padding: 20px;}
+        input {padding: 8px; width: 100%; max-width: 320px;}
+        p {margin-top: 10px; font-size: 18px;}
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h2>양방향 바인딩 (v-model)</h2>
+        <input v-model="message" placeholder="여기에 입력해 보세여">
+        <p>{{ message }}</p>
+    </div>
+    <script>
+        var app = new Vue({
+          el: '#app',
+          data: {
+            message: '안녕하세요 Vue!'
+          }
+        });
+    </script>
+</body>
+</html>

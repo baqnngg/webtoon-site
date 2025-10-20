@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>이벤트 처리</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+  <div id="app">
+    <h3>@click / @input</h3>
+    <button @click="count++">클릭: {{ count }}</button>
+    <div style="margin-top: 10px;">
+      <input :value="name" @input="onInput"> => 대문자: {{ upper }}
+    </div>
+  </div>
+
+  <script>
+    Vue.createApp({
+      data: () => ({
+        count: 0,
+        name: "",
+        upper: ""
+      }),
+      methods: {
+        onInput(e) {
+          this.name = e.target.value;
+          this.upper = this.name.toUpperCase();
+        }
+      }
+    }).mount("#app");
+  </script>
+</body>
+</html>

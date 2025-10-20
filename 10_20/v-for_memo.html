@@ -1,0 +1,149 @@
+<html>
+<head>
+  <title>v-for 드라마틱 데모</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <style>
+    body { font-family: system-ui, Arial; padding: 24px; background:#f7f9ff; }
+    h3 { margin:0 0 12px; }
+    .controls { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+    button { padding:6px 12px; border:1px solid #d0d3e2; background:#fff; border-radius:10px; cursor:pointer; }
+    button.primary { background:#2f6af3; color:#fff; border-color:#2f6af3; }
+    input[type="text"] { padding:6px 10px; border:1px solid #d0d3e2; border-radius:10px; }
+
+    ul { list-style:none; padding:0; margin:0; }
+    .item {
+      display:flex; align-items:center; gap:10px;
+      padding:10px 12px; margin:6px 0;
+      background:#fff; border:1px solid #e2e6f3; border-radius:12px;
+      box-shadow:0 6px 18px rgba(0,0,0,0.04);
+    }
+    .badge { font-size:12px; padding:2px 8px; border-radius:999px; background:#eef2ff; color:#2f6af3; border:1px solid #dfe6ff; }
+    .text { flex:1; }
+    .del { border-color:#ffd7d7; }
+    .done { text-decoration:line-through; color:#9aa4c6; }
+    .emoji { font-size:18px; }
+
+    /* transition-group 애니메이션 */
+    .fade-move { transition: transform 0.35s ease; } /* 위치 이동 FLIP */
+    .fade-enter-active, .fade-leave-active { transition: all 0.35s ease; }
+    .fade-enter-from { opacity:0; transform: translateY(8px) scale(0.98); }
+    .fade-leave-to   { opacity:0; transform: translateY(-8px) scale(0.98); }
+
+    /* 강조 효과 */
+    .highlight { animation: pop 600ms ease; }
+    @keyframes pop {
+      0% { transform:scale(0.98); box-shadow:0 0 0 rgba(47,106,243,0); }
+      50% { transform:scale(1.02); box-shadow:0 10px 24px rgba(47,106,243,0.25); }
+      100% { transform:scale(1); box-shadow:0 6px 18px rgba(0,0,0,0.04); }
+    }
+
+    .summary { margin-top:8px; color:#6571a7; font-size:14px; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h3>v-for (애니메이션, 추가/삭제/정렬/섞기 데모)</h3>
+
+    <div class="controls">
+      <input type="text" v-model.trim="newText" placeholder="항목 추가 (엔터)">
+      <button class="primary" @click="add()">추가</button>
+      <button @click="shuffle()">섞기</button>
+      <button @click="sortAZ()">가나다(ABC) 정렬</button>
+      <button @click="reverse()">역순</button>
+      <button @click="toggleFilter()">{{ showOnlyActive ? '모두 보기' : '미완료만' }}</button>
+      <span class="summary">총 {{ filtered.length }} / 완료 {{ doneCount }} · 미완료 {{ activeCount }}</span>
+    </div>
+
+    <!-- transition-group으로 이동/출입 애니메이션 -->
+    <transition-group name="fade" tag="ul">
+      <li class="item" v-for="(todo, idx) in filtered" :key="todo.id" :class="[{highlight: justAddedId===todo.id}]">
+        <span class="badge">{{ idx + 1 }}</span>
+        <span class="emoji">{{ todo.emoji }}</span>
+        <label class="text">
+          <input type="checkbox" v-model="todo.done"> 
+          <span :class="{done: todo.done}">{{ todo.text }}</span>
+        </label>
+        <button class="del" @click="remove(todo.id)">삭제</button>
+      </li>
+    </transition-group>
+  </div>
+
+  <script>
+    Vue.createApp({
+      data() {
+        return {
+          todos: [
+            { id:1, text:'HTML',   done:false, emoji:'📄' },
+            { id:2, text:'CSS',    done:false, emoji:'🎨' },
+            { id:3, text:'Vue.js', done:false, emoji:'🟢' }
+          ],
+          newText: '',
+          nextId: 4,
+          showOnlyActive: false,
+          justAddedId: null
+        }
+      },
+      computed: {
+        filtered() {
+          return this.showOnlyActive ? this.todos.filter(t => !t.done) : this.todos
+        },
+        doneCount() { return this.todos.filter(t => t.done).length },
+        activeCount() { return this.todos.filter(t => !t.done).length }
+      },
+      methods: {
+        add() {
+          const text = this.newText || this.randomText()
+          const emoji = this.pickEmoji(text)
+          const id = this.nextId++
+          this.todos.push({ id, text, done:false, emoji })
+          this.newText = ''
+          this.highlight(id)
+        },
+        remove(id) {
+          const i = this.todos.findIndex(t => t.id === id)
+          if (i >= 0) this.todos.splice(i, 1)
+        },
+        shuffle() {
+          // Fisher-Yates
+          for (let i = this.todos.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1))
+            ;[this.todos[i], this.todos[j]] = [this.todos[j], this.todos[i]]
+          }
+        },
+        sortAZ() {
+          this.todos.sort((a,b) => a.text.localeCompare(b.text))
+        },
+        reverse() {
+          this.todos.reverse()
+        },
+        toggleFilter() {
+          this.showOnlyActive = !this.showOnlyActive
+        },
+        randomText() {
+          const pool = ['JavaScript','TypeScript','Pinia','Router','Components','Reactivity','Transitions','SSR','SFC','HMR']
+          return pool[Math.floor(Math.random()*pool.length)]
+        },
+        pickEmoji(text) {
+          if (/css/i.test(text)) return '🎨'
+          if (/router/i.test(text)) return '🧭'
+          if (/pinia/i.test(text)) return '🧺'
+          if (/react/i.test(text)) return '⚡'
+          if (/type/i.test(text)) return '🔡'
+          if (/transition/i.test(text)) return '🎬'
+          return ['🧩','🚀','✨','🔧','🧠','📦'][Math.floor(Math.random()*6)]
+        },
+        highlight(id) {
+          this.justAddedId = id
+          setTimeout(() => { this.justAddedId = null }, 700)
+        }
+      },
+      mounted() {
+        // 엔터로 추가
+        window.addEventListener('keydown', e => {
+          if (e.key === 'Enter' && document.activeElement.tagName !== 'BUTTON') this.add()
+        })
+      }
+    }).mount('#app')
+  </script>
+</body>
+</html>

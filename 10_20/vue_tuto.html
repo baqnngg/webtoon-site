@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue 예제 — 스타일된 섹션 타이틀</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <style>
+      body {
+        font-family: "Noto Sans KR", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        padding: 24px;
+        line-height: 1.6;
+        background: #f7f9fc;
+        color: #111827;
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 28px 0 12px;
+        font-size: clamp(1.1rem, 2.2vw, 1.6rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: #0f172a;
+      }
+
+      .section-title .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #7c3aed, #06b6d4);
+        box-shadow: 0 6px 18px rgba(12, 74, 110, 0.12);
+        transform-origin: center;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0% { transform: translateY(0) scale(1); }
+        50% { transform: translateY(-6px) scale(1.06); }
+        100% { transform: translateY(0) scale(1); }
+      }
+
+      .section-sub {
+        display: block;
+        font-size: 0.9rem;
+        color: #475569;
+        margin-bottom: 8px;
+      }
+
+      #app { margin-bottom: 10px; padding: 12px; background: #fff; border-radius: 10px; box-shadow: 0 6px 18px rgba(15,23,42,0.04); }
+      #app-2, #app-3, #app-4 { padding: 12px; background: #fff; border-radius: 10px; box-shadow: 0 6px 18px rgba(15,23,42,0.04); margin-bottom: 18px; }
+      button { cursor: pointer; padding: 8px 12px; border-radius: 8px; border: none; background: linear-gradient(90deg,#06b6d4,#7c3aed); color: white; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <h1 class="section-title" id="title-message" aria-label="메시지 섹션 타이틀">
+      <span class="dot" aria-hidden="true"></span>
+      메시지
+    </h1>
+    <span class="section-sub">간단한 데이터 바인딩 예제</span>
+    <div id="app">
+        {{ message }}
+    </div>
+
+    <h1 class="section-title" id="title-dynamic" aria-label="동적 바인딩 타이틀">
+      <span class="dot" aria-hidden="true"></span>
+      동적으로 바인딩된 title 보기
+    </h1>
+    <span class="section-sub">마우스를 올리면 로드 시간이 표시됩니다</span>
+    <div id="app-2">
+        <span v-bind:title="message">
+          내 위에 잠시 마우스를 올리면 동적으로 바인딩 된 title을 볼 수 있습니다!
+        </span>
+    </div>
+
+    <h1 class="section-title" id="title-toggle" aria-label="버튼 섹션 타이틀">
+      <span class="dot" aria-hidden="true"></span>
+      버튼으로 텍스트 true &amp; false
+    </h1>
+    <span class="section-sub">Vue의 반응형으로 보여주기/숨기기 버튼</span>
+    <div id="app-3">
+        <p v-if="seen">이제 나를 볼 수 있어요</p>
+        <button @click="toggleSeen">버튼</button>
+    </div>
+
+    <h1 class="section-title" id="title-todo" aria-label="To Do 리스트 타이틀">
+      <span class="dot" aria-hidden="true"></span>
+      To Do 리스트
+    </h1>
+    <span class="section-sub">v-for로 반복 렌더링</span>
+    <div id="app-4">
+        <ol>
+          <li v-for="(todo, idx) in todos" :key="idx">
+            {{ todo.text }}
+          </li>
+        </ol>
+    </div>
+
+    <h1 class="section-title" id="title-reverse">
+      <span class="dot" aria-hidden="true"></span>
+      메시지 뒤집기
+    </h1>
+    <span class="section-sub">문자열 조작을 활용한 Vue 이벤트 예제</span>
+    <div id="app-5">
+      <p>{{ message }}</p>
+      <button v-on:click="reverseMessage">메시지 뒤집기</button>
+    </div>
+
+    <h1 class="section-title" id="title-reverse">
+      <span class="dot" aria-hidden="true"></span>
+      입력과 양방향 데이터 바인딩
+    </h1>
+    <span class="section-sub">v-model로 실시간 입력 반영</span>
+    <div id="app-6">
+      <p>{{ message }}</p>
+      <input v-model="message" placeholder="메시지를 입력해보세요" />
+    </div>
+
+    <h1 class="section-title" id="title-reverse">
+      <span class="dot" aria-hidden="true"></span>
+      컴포넌트 사용 예제
+    </h1>
+    <span class="section-sub">Vue.component로 사용자 정의 컴포넌트 등록</span>
+    <div id="app-7">
+      <ol>
+        <todo-item
+          v-for="item in groceryList"
+          v-bind:todo="item"
+          v-bind:key="item.id"
+        ></todo-item>
+      </ol>
+    </div>
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: '안녕하세요 Vue!'
+            }
+        });
+
+        var app2 = new Vue({
+            el: '#app-2',
+            data: {
+                message: '이 페이지는 ' + new Date() + ' 에 로드 되었습니다'
+            }
+        });
+
+        var app3 = new Vue({
+            el: '#app-3',
+            data: {
+                seen: true
+            },
+            methods: {
+                toggleSeen() {
+                    this.seen = !this.seen
+                }
+            }
+        });
+
+        var app4 = new Vue({
+            el: '#app-4',
+            data: {
+                todos: [
+                  { text: 'JavaScript 배우기' },
+                  { text: 'Vue 배우기' },
+                  { text: '무언가 멋진 것을 만들기' }
+                ]
+            }
+        });
+
+        var app5 = new Vue({
+            el: '#app-5',
+            data: {
+                message: '안녕하세요! Vue.js!'
+            },
+            methods: {
+                reverseMessage: function () {
+                    this.message = this.message.split('').reverse().join('')
+                }
+            }
+        });
+
+        var app6 = new Vue({
+          el: '#app-6',
+          data: {
+            message: '안녕하세요 Vue!'
+          }
+        });
+
+        Vue.component('todo-item', {
+          props: ['todo'],
+          template: '<li>{{ todo.text }}</li>'
+        });
+
+        var app7 = new Vue({
+          el: '#app-7',
+          data: {
+            groceryList: [
+              { id: 0, text: 'Vegetables' },
+              { id: 1, text: 'Cheese' },
+              { id: 2, text: 'Whatever else humans are supposed to eat' }
+            ]
+          }
+        });
+    </script>
+</body>
+</html>

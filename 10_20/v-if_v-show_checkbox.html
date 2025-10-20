@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>v-if / v-show</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body {font-family: system-ui, Arial; padding: 30px; background: #f6f8ff;}
+        h1 {margin-bottom: 10px;}
+        label {display: block; margin-bottom: 20px;}
+        p {padding: 12px; border-radius: 10px; font-size: 18px; transition: all 0.5s ease;}
+
+        .if-box {background: #ffe6e6; color: #c22;}
+        .show-box {background: #e7ffe7; color: #2a8a2a;}
+
+        .fade-enter-active, .fade-leave-active {transition: opacity 0.8s;}
+        .fade-enter-from, .fade-leave-to {opacity: 0;}
+
+        .v-enter-active, .v-leave-active {transition: opacity 0.5s ease;}
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h3>v-if / v-show 비교</h3>
+        <label><input type="checkbox" v-model="on">표시하기</label>
+
+        <transition name="fade">
+            <p v-if="on" class="if-box">
+                v-if : 보일 때만 DOM에 존재 (새로 등장)
+            </p>
+        </transition>
+
+        <p v-show="on" class="show-box">
+            v-show : DOM은 유지, CSS로 숨김
+        </p>
+    </div>
+
+    <script>
+        Vue.createApp({
+            data: () => ({ on: true })
+        }).mount('#app')
+    </script>
+</body>
+</html>

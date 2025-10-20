@@ -1,0 +1,127 @@
+<html>
+<head>
+  <title>전세계 시간 지도 (Leaflet + WorldTimeAPI, 키 불필요)</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+  <style>
+    body { font-family: sans-serif; margin: 12px; line-height: 1.5; }
+    #map { height: 560px; width: 100%; margin-top: 8px; }
+    .panel { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .badge { display:inline-block; padding:2px 6px; border-radius:6px; background:#efefef; margin-right:6px; }
+  </style>
+</head>
+<body>
+  <h2>전세계 시간 지도</h2>
+  <div class="panel">
+    <button id="btnRefresh">시간 새로고침</button>
+    <label>
+      자동 갱신
+      <select id="auto">
+        <option value="0" selected>OFF</option>
+        <option value="30">30초</option>
+        <option value="60">1분</option>
+        <option value="300">5분</option>
+      </select>
+    </label>
+    <span class="badge">데이터: worldtimeapi.org</span>
+    <span class="badge">지도: OpenStreetMap</span>
+  </div>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // 대표 도시 목록 (위도, 경도, tz)
+    const CITIES = [
+      { name:"서울",           lat:37.5665, lon:126.9780, tz:"Asia/Seoul" },
+      { name:"도쿄",           lat:35.6895, lon:139.6917, tz:"Asia/Tokyo" },
+      { name:"베이징",         lat:39.9042, lon:116.4074, tz:"Asia/Shanghai" },
+      { name:"싱가포르",       lat:1.3521,  lon:103.8198, tz:"Asia/Singapore" },
+      { name:"뉴델리",         lat:28.6139, lon:77.2090,  tz:"Asia/Kolkata" },
+      { name:"두바이",         lat:25.2048, lon:55.2708,  tz:"Asia/Dubai" },
+      { name:"모스크바",       lat:55.7558, lon:37.6173,  tz:"Europe/Moscow" },
+      { name:"이스탄불",       lat:41.0082, lon:28.9784,  tz:"Europe/Istanbul" },
+      { name:"런던",           lat:51.5074, lon:0.1278,   tz:"Europe/London" },
+      { name:"파리",           lat:48.8566, lon:2.3522,   tz:"Europe/Paris" },
+      { name:"베를린",         lat:52.5200, lon:13.4050,  tz:"Europe/Berlin" },
+      { name:"마드리드",       lat:40.4168, lon:-3.7038,  tz:"Europe/Madrid" },
+      { name:"요하네스버그",   lat:-26.2041,lon:28.0473,  tz:"Africa/Johannesburg" },
+      { name:"카이로",         lat:30.0444, lon:31.2357,  tz:"Africa/Cairo" },
+      { name:"뉴욕",           lat:40.7128, lon:-74.0060, tz:"America/New_York" },
+      { name:"시카고",         lat:41.8781, lon:-87.6298, tz:"America/Chicago" },
+      { name:"덴버",           lat:39.7392, lon:-104.9903,tz:"America/Denver" },
+      { name:"로스앤젤레스",   lat:34.0522, lon:-118.2437,tz:"America/Los_Angeles" },
+      { name:"멕시코시티",     lat:19.4326, lon:-99.1332, tz:"America/Mexico_City" },
+      { name:"상파울루",       lat:-23.5505,lon:-46.6333, tz:"America/Sao_Paulo" },
+      { name:"부에노스아이레스",lat:-34.6037,lon:-58.3816, tz:"America/Argentina/Buenos_Aires" },
+      { name:"시드니",         lat:-33.8688,lon:151.2093, tz:"Australia/Sydney" },
+      { name:"오클랜드",       lat:-36.8509,lon:174.7645, tz:"Pacific/Auckland" }
+    ];
+
+    // 지도
+    const map = L.map('map', { worldCopyJump:true }).setView([20, 0], 2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      attribution:'© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // 도시별 마커
+    const markers = new Map(); // tz -> { marker, city }
+    CITIES.forEach((c) => {
+      const m = L.marker([c.lat, c.lon]).addTo(map);
+      m.bindPopup(`<b>${c.name}</b><br><span data-tz="${c.tz}">로딩 중…</span>`);
+      markers.set(c.tz, { marker:m, city:c });
+    });
+
+    // 시간 문자열 포맷터
+    function fmtLocal(dtStr) {
+      // worldtimeapi의 datetime 예: "2025-10-13T13:25:10.123456+09:00"
+      // 보기 좋게 초까지만 자르기
+      const s = dtStr.replace('T',' ').split('.')[0];
+      return s;
+    }
+
+    // 단일 타임존 조회
+    async function fetchTime(tz) {
+      const r = await fetch('https://worldtimeapi.org/api/timezone/' + encodeURIComponent(tz));
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }
+
+    // 모든 도시 시간 갱신
+    async function refreshAll() {
+      const promises = [];
+      markers.forEach(({ marker, city }, tz) => {
+        promises.push(
+          fetchTime(tz)
+            .then(d => {
+              const human = fmtLocal(d.datetime);
+              const utcOff = d.utc_offset || '';
+              const html = `<b>${city.name}</b><br>${human}<br><small>${tz} (UTC${utcOff})</small>`;
+              marker.setPopupContent(html);
+              // 팝업이 열려 있으면 즉시 갱신 보이게
+              if (marker.isPopupOpen && marker.isPopupOpen()) marker.update();
+            })
+            .catch(e => {
+              marker.setPopupContent(`<b>${city.name}</b><br>시간 로드 실패<br><small>${tz}</small>`);
+            })
+        );
+      });
+      await Promise.all(promises).catch(()=>{});
+    }
+
+    // 수동 새로고침
+    document.getElementById('btnRefresh').onclick = refreshAll;
+
+    // 자동 새로고침
+    let timer = null;
+    document.getElementById('auto').onchange = (e) => {
+      const sec = parseInt(e.target.value, 10);
+      if (timer) { clearInterval(timer); timer = null; }
+      if (sec > 0) {
+        timer = setInterval(refreshAll, sec * 1000);
+      }
+    };
+
+    // 초기 로드
+    refreshAll();
+  </script>
+</body>
+</html>
