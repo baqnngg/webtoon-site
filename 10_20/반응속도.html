@@ -1,0 +1,126 @@
+<html>
+<head>
+  <title>Vue 미니게임 - 반응속도 테스트</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <style>
+    body { font-family: system-ui, Arial; margin:0; background:#0f1220; color:#e9ecff; }
+    .wrap { max-width:760px; margin:40px auto; padding:0 20px; }
+    h1 { margin:0 0 8px; }
+    .bar { display:flex; gap:10px; align-items:center; margin:8px 0 16px; }
+    .btn { padding:8px 14px; border-radius:10px; border:1px solid #3a457a; background:#12162b; color:#e9ecff; cursor:pointer; }
+    .btn.primary { background:#4a6bff; border-color:#4a6bff; }
+    .stat { padding:6px 10px; border-radius:10px; background:#1b2246; border:1px solid #2a366f; color:#c8d4ff; }
+    .board {
+      height:320px; border-radius:18px; display:flex; align-items:center; justify-content:center;
+      user-select:none; cursor:pointer; transition: background .2s ease;
+      box-shadow:0 20px 60px rgba(0,0,0,.35); border:1px solid #212645;
+    }
+    .wait  { background:#16203c; }
+    .ready { background:#42321a; }
+    .go    { background:#1f6f3a; }
+    .msg { font-size:22px; text-align:center; line-height:1.4; }
+    .big { font-size:40px; font-weight:800; }
+    .small { font-size:14px; opacity:.8; }
+    .best { color:#8ed1ff; }
+  </style>
+</head>
+<body>
+  <div id="app" class="wrap">
+    <h1>반응속도 테스트</h1>
+    <div class="bar">
+      <span class="stat">최근 기록: {{ lastText }}</span>
+      <span class="stat best">최고 기록: {{ bestText }}</span>
+      <button class="btn" @click="resetBest" :disabled="best==null">최고 기록 초기화</button>
+      <button class="btn primary" @click="start" v-if="!playing">시작</button>
+      <button class="btn" @click="cancel" v-else>취소</button>
+    </div>
+
+    <div class="board" :class="state" @click="handleClick">
+      <div class="msg" v-if="state==='wait'">
+        <div><strong>시작</strong>을 누르면 준비 상태로 들어가요.</div>
+        <div class="small">초록색이 되면 즉시 클릭!</div>
+      </div>
+      <div class="msg" v-else-if="state==='ready'">
+        <div><strong>기다리세요…</strong></div>
+        <div class="small">초록색이 되면 누르세요. 너무 빨리 누르면 실격!</div>
+      </div>
+      <div class="msg" v-else-if="state==='go'">
+        <div class="big">지금! 클릭!</div>
+        <div class="small">가능한 한 빨리 눌러 보세요.</div>
+      </div>
+      <div class="msg" v-else-if="state==='early'">
+        <div>너무 빨랐어요!</div>
+        <div class="small">다시 시작을 눌러 재도전.</div>
+      </div>
+      <div class="msg" v-else-if="state==='done'">
+        <div>기록: <span class="big">{{ last }}ms</span></div>
+        <div class="small" v-if="best!=null">최고: <strong>{{ best }}ms</strong></div>
+        <div class="small" v-else>최고 기록 없음</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  Vue.createApp({
+    data() {
+      return {
+        state: 'wait',      // wait | ready | go | early | done
+        playing: false,
+        t0: 0,              // 초록색으로 바뀐 시각
+        timer: null,        // ready→go 전환 타이머
+        last: null,         // 최근 기록(ms)
+        best: null          // 최고 기록(ms)
+      }
+    },
+    computed: {
+      lastText(){ return this.last==null ? '-' : this.last+'ms' },
+      bestText(){ return this.best==null ? '-' : this.best+'ms' }
+    },
+    mounted() {
+      const saved = localStorage.getItem('rx-best');
+      if (saved) this.best = Number(saved);
+    },
+    methods: {
+      start() {
+        this.cancel();
+        this.playing = true;
+        this.state = 'ready';
+        // 1.2~3.5초 후 'go'
+        const delay = 1200 + Math.random()*2300;
+        this.timer = setTimeout(() => {
+          this.state = 'go';
+          this.t0 = performance.now();
+        }, delay);
+      },
+      cancel() {
+        clearTimeout(this.timer); this.timer = null;
+        this.playing = false; this.t0 = 0;
+        if (this.state !== 'done') this.state = 'wait';
+      },
+      handleClick() {
+        if (this.state === 'ready') {
+          // 초록색 전에 누름 → 실격
+          clearTimeout(this.timer); this.timer = null;
+          this.state = 'early'; this.playing = false;
+          return;
+        }
+        if (this.state === 'go') {
+          const t = Math.round(performance.now() - this.t0);
+          this.last = t; this.state = 'done'; this.playing = false;
+          if (this.best==null || t < this.best) {
+            this.best = t; localStorage.setItem('rx-best', String(t));
+          }
+        }
+        if (this.state === 'wait' || this.state === 'early' || this.state === 'done') {
+          // 아무 동작 없음
+        }
+      },
+      resetBest() {
+        this.best = null;
+        localStorage.removeItem('rx-best');
+      }
+    }
+  }).mount('#app');
+  </script>
+</body>
+</html>

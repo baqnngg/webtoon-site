@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>랜덤 유저 프로필</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body {font-family: Arial; padding: 20px;}
+        img {border-radius: 50%; width: 80px; height: 80px;}
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h2>랜덤 유저 프로필</h2>
+        <img :src="photo" alt="">
+        <p>{{ name }} ({{ age }})</p>
+        <p>{{ email }}</p>
+        <button @click="randomUser">새로고침</button>
+    </div>
+
+    <script>
+        Vue.createApp({
+            data() {
+                return {
+                    name: '홍길동',
+                    age: 25,
+                    email: 'test@example.com',
+                    photo: 'https://i.pravatar.cc/80?img=1'
+                }
+            },
+            methods: {
+                randomUser() {
+                    const n = Math.floor(Math.random() * 70) + 1; // 지역 변수로 선언
+                    this.photo = `https://i.pravatar.cc/80?img=${n}`;
+                    this.name = 'User' + n;
+                    this.age = 20 + (n % 30);
+                    this.email = `user${n}@mail.com`;
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<html>
+<head>
+  <title>Vue 미니게임 - 두더지 잡기</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <style>
+    body { font-family: system-ui, Arial; margin:0; padding:24px; background:#f7f9ff; }
+    h1 { margin:0 0 8px; }
+    .bar { display:flex; gap:12px; align-items:center; margin-bottom:16px; }
+    .btn { padding:8px 14px; border-radius:10px; border:1px solid #cfd6ff; background:#fff; cursor:pointer; }
+    .btn.primary { background:#2f6af3; color:#fff; border-color:#2f6af3; }
+    .stat { padding:6px 10px; border-radius:10px; background:#eef2ff; color:#2f6af3; border:1px solid #dfe6ff; }
+    .grid {
+      display:grid; grid-template-columns: repeat(3,100px); grid-auto-rows:100px;
+      gap:12px; user-select:none;
+    }
+    .hole {
+      display:flex; align-items:center; justify-content:center;
+      border-radius:16px; background:#e9ecff; border:2px solid #d8ddff;
+      position:relative; transition: transform .06s ease;
+    }
+    .hole:active { transform: scale(0.98); }
+    .mole {
+      width:64px; height:64px; border-radius:50%;
+      background:#7a53ff; box-shadow:0 10px 20px rgba(122,83,255,.35);
+      display:flex; align-items:center; justify-content:center;
+      color:#fff; font-weight:700; font-size:14px;
+      transform: translateY(14px); animation: pop .18s ease-out;
+    }
+    @keyframes pop { from{ transform:translateY(30px) scale(0.9); opacity:.6 } to{ transform:translateY(14px) scale(1); opacity:1 } }
+    .over {
+      position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+      background:rgba(15,18,32,.6); color:#fff; font-size:22px; backdrop-filter: blur(2px);
+    }
+    .panel { background:#121733; padding:20px 26px; border-radius:16px; box-shadow:0 12px 30px rgba(0,0,0,.4); text-align:center; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>두더지 잡기</h1>
+    <div class="bar">
+      <span class="stat">점수: {{ score }}</span>
+      <span class="stat">남은 시간: {{ timeLeft }}s</span>
+      <span class="stat">난이도: {{ speedLabel }}</span>
+      <button class="btn" @click="slower" :disabled="running">느리게</button>
+      <button class="btn" @click="faster" :disabled="running">빠르게</button>
+      <button class="btn primary" @click="start" v-if="!running">게임 시작</button>
+      <button class="btn" @click="stop" v-else>중지</button>
+    </div>
+
+    <div class="grid">
+      <div class="hole" v-for="(cell, idx) in holes" :key="idx" @click="bonk(idx)">
+        <div v-if="cell" class="mole">HIT!</div>
+      </div>
+    </div>
+
+    <div class="over" v-if="ended">
+      <div class="panel">
+        <div style="font-size:18px;margin-bottom:8px;">게임 종료</div>
+        <div style="margin-bottom:12px;">최종 점수: <strong>{{ score }}</strong></div>
+        <button class="btn primary" @click="start">다시 시작</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  Vue.createApp({
+    data() {
+      return {
+        holes: Array(9).fill(false),  // true면 두더지 보임
+        current: -1,                  // 현재 두더지 위치
+        timer: null,                  // 두더지 이동 타이머
+        clock: null,                  // 남은시간 타이머
+        score: 0,
+        duration: 30,                 // 게임 시간(초)
+        timeLeft: 30,
+        intervalMs: 800,              // 두더지 이동 속도(난이도)
+        running: false,
+        ended: false,
+      }
+    },
+    computed: {
+      speedLabel() {
+        if (this.intervalMs <= 450) return '매우 빠름';
+        if (this.intervalMs <= 700) return '빠름';
+        if (this.intervalMs <= 1000) return '보통';
+        return '느림';
+      }
+    },
+    methods: {
+      start() {
+        this.stop();                 // 혹시 남아있을 이전 타이머 정리
+        this.score = 0;
+        this.timeLeft = this.duration;
+        this.running = true;
+        this.ended = false;
+        this.spawn();
+
+        // 두더지 이동
+        this.timer = setInterval(this.spawn, this.intervalMs);
+        // 남은 시간 감소
+        this.clock = setInterval(() => {
+          this.timeLeft--;
+          if (this.timeLeft <= 0) this.stop(true);
+        }, 1000);
+      },
+      stop(isEnd=false) {
+        clearInterval(this.timer); this.timer = null;
+        clearInterval(this.clock); this.clock = null;
+        this.running = false;
+        this.clearMole();
+        if (isEnd) this.ended = true;
+      },
+      spawn() {
+        // 이전 위치 비우고 새로운 랜덤 위치에 두더지 표시
+        this.clearMole();
+        const next = Math.floor(Math.random() * this.holes.length);
+        this.holes[next] = true;
+        this.current = next;
+
+        // 짧은 시간 후 자동으로 숨기기(놓치면 점수 없음)
+        setTimeout(() => {
+          if (this.current === next) this.clearMole();
+        }, Math.max(250, this.intervalMs - 150));
+      },
+      clearMole() {
+        if (this.current >= 0) this.holes[this.current] = false;
+        this.current = -1;
+      },
+      bonk(idx) {
+        if (!this.running) return;
+        if (idx === this.current) {
+          this.score++;
+          this.clearMole();
+          // 작은 난이도 보정: 성공할수록 살짝 빨라지게
+          this.intervalMs = Math.max(350, this.intervalMs - 10);
+          clearInterval(this.timer);
+          this.timer = setInterval(this.spawn, this.intervalMs);
+        } else {
+          // 빈 구멍을 누르면 패널티는 없지만 반응만
+          this.score = Math.max(0, this.score - 0); 
+        }
+      },
+      faster() { this.intervalMs = Math.max(350, this.intervalMs - 150); },
+      slower() { this.intervalMs = Math.min(1400, this.intervalMs + 150); },
+    },
+    beforeUnmount() { this.stop(); }
+  }).mount('#app');
+  </script>
+</body>
+</html>

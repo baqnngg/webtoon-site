@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 시뮬레이터</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body {font-family: Arial; padding: 20px;}
+        input {display: block; margin-bottom: 10px; padding: 8px; width: 200px;}
+        .ok {color: green;} .error {color: red;}
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h2>로그인 시뮬레이터</h2>
+        <input v-model="id" placeholder="아이디">
+        <input type="password" v-model="pw" placeholder="비밀번호">
+
+        <button @click="login">로그인</button>
+        <p :class="msgClass">{{ msg }}</p>
+    </div>
+    <script>
+        Vue.createApp({
+            data() {return {id:'', pw:'', msg:'', msgClass:''}},
+            methods: {
+                login() {
+                    if (this.id === 'admin' && this.pw === '1234'){
+                        this.msg = '로그인 성공';
+                        this.msgClass = 'ok';
+                    } else {
+                        this.msg = '로그인 실패';
+                        this.msgClass = 'error';
+                    }
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html>
