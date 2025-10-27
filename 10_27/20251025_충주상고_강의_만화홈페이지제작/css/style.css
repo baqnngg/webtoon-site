@@ -1,64 +1,166 @@
-
-/* 기본 레이아웃 */
+/* ===== 기본 레이아웃 ===== */
 * { box-sizing: border-box; }
-body { margin:0; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; line-height: 1.5; }
-a { text-decoration: none; color: inherit; }
+body { 
+  margin:0; 
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; 
+  line-height: 1.5; 
+  background:#fffaf5; 
+  color:#333; 
+}
+a { text-decoration: none; color: inherit; transition:0.25s; }
 
-.site-header { position: sticky; top:0; background:#222; color:#fff; padding:12px 16px; display:flex; align-items:center; gap:24px; z-index:10; }
+/* ===== 헤더 ===== */
+.site-header { 
+  position: sticky; 
+  top:0; 
+  background:#ffb347; 
+  color:#fff; 
+  padding:12px 16px; 
+  display:flex; 
+  align-items:center; 
+  gap:24px; 
+  z-index:10; 
+}
 .logo a { color:#fff; }
-.topnav a { color:#ddd; margin-right:12px; padding:8px 10px; border-radius:10px; }
-.topnav a:hover { background:#444; color:#fff; }
+.topnav a { 
+  color:#fffbe6; 
+  margin-right:12px; 
+  padding:8px 10px; 
+  border-radius:10px; 
+  transition:0.25s;
+}
+.topnav a:hover { background:#ffd59e; color:#222; }
 
-.site-footer { padding:24px 16px; color:#666; text-align:center; border-top:1px solid #eee; }
+/* ===== 푸터 ===== */
+.site-footer { 
+  padding:24px 16px; 
+  color:#888; 
+  text-align:center; 
+  border-top:1px solid #f0d9b5; 
+  background:#fff8ee; 
+}
 
+/* ===== 컨테이너 ===== */
 .container { padding:24px 16px; max-width:1100px; margin:0 auto; }
 .container.narrow { max-width:800px; text-align:justify; }
 
-.profile { width:300px; height:300px; }
+/* ===== 프로필 ===== */
+.profile { width:300px; height:300px; border-radius:12px; }
 
-.hero { padding:40px 24px; background:#f7f7f9; border-radius:16px; margin-bottom:15px; 
-background-image: url('../image/welcome.png'); background-position: bottom right;
-background-repeat: no-repeat;}
+/* ===== Hero ===== */
+.hero { 
+  padding:40px 24px; 
+  background:#fff0e0; 
+  border-radius:16px; 
+  margin-bottom:15px; 
+}
 
-.btn { display:inline-block; padding:10px 14px; border-radius:12px; border:1px solid #333; }
-.btn.subtle { border-color:#aaa; color:#333; }
+/* ===== 버튼 ===== */
+.btn { 
+  display:inline-block; 
+  padding:10px 14px; 
+  border-radius:12px; 
+  border:1px solid #ffb347; 
+  color:#222; 
+  background:#fffaf2; 
+  transition:0.25s; 
+}
+.btn:hover { background:#ffb347; color:#fff; }
+.btn.subtle { border-color:#ffc77a; color:#333; background:#fff; }
 
+/* ===== Grid ===== */
 .grid { display:grid; gap:16px; }
 .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
-.card { border:1px solid #e5e5e5; border-radius:16px; padding:16px; background:#fff; min-height:500px; }
-/* .card.intro_author { background-image: url('../image/introduction_author_1.png'), url('../image/introduction_author_2.png');
-background-position: bottom left, bottom right;
-background-repeat: no-repeat;} */
-/* .card.intro_works{ background-image: url('../image/introduction_works.png'); background-position: bottom right; 
-  background-repeat: no-repeat;} */
-.card.season1_title{ background-image: url('../image/season1_title.png');
-  background-position: bottom; background-repeat: no-repeat;}
-.card.season2_title{ background-image: url('../image/season2_title.png');
-  background-position: bottom; background-repeat: no-repeat;}
-.card.season3_title{ background-image: url('../image/season3_title.png');
-  background-position: bottom; background-repeat: no-repeat;}
+/* ===== 카드 ===== */
+.card { 
+  border:1px solid #f3d6a5; 
+  border-radius:16px; 
+  padding:16px; 
+  background:#fffdf9; 
+  min-height:500px; 
+}
 
-    
-  /* 리더 레이아웃 */
+/* ===== 리더 레이아웃 ===== */
 .reader-wrap { display:flex; min-height: calc(100vh - 120px); }
-.sidebar { width:260px; border-right:1px solid #eee; padding:12px; position:sticky; top:64px; height: calc(100vh - 64px); overflow:auto; background:#fafafa; }
-.season-select { display:flex; gap:8px; margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid silver; }
-.season-btn { width:calc(33.333% - 6px); padding:8px; border-radius:10px; border:1px solid #ccc; background:#fff; cursor:pointer; }
-.season-btn.active { background:#111; color:#fff; border-color:#111; }
+.sidebar { 
+  width:260px; 
+  border-right:1px solid #ffe5b4; 
+  padding:12px; 
+  position:sticky; 
+  top:64px; 
+  height: calc(100vh - 64px); 
+  overflow:auto; 
+  background:#fff8ee; 
+}
+.season-select { display:flex; gap:8px; margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid #ffd59e; }
+.season-btn { 
+  width:calc(33.333% - 6px); 
+  padding:8px; 
+  border-radius:10px; 
+  border:1px solid #ffc77a; 
+  background:#fff; 
+  cursor:pointer; 
+  transition:0.25s; 
+}
+.season-btn.active { background:#ffb347; color:#fff; border-color:#ffb347; }
 
+/* ===== 에피소드 리스트 ===== */
 .episode-list { list-style:none; margin:0; padding:0; display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; }
-.episode-list li { border:1px solid #ddd; padding:6px 8px; text-align:center; border-radius:10px; background:#fff; cursor:pointer; font-size:14px; }
-.episode-list li.active { background:#111; color:#fff; border-color:#111; }
+.episode-list li { border:1px solid #ffd59e; padding:6px 8px; text-align:center; border-radius:10px; background:#fff; cursor:pointer; font-size:14px; transition:0.2s; }
+.episode-list li.active { background:#ffb347; color:#fff; border-color:#ffb347; }
 
+/* ===== 리더 메인 ===== */
 .reader { flex:1; padding:12px 16px; }
 .toolbar { display:flex; justify-content:center; align-items:center; gap:16px; margin-bottom:12px; }
-.toolbar button { padding:8px 12px; border-radius:10px; border:1px solid #333; background:#fff; cursor:pointer; }
+.toolbar button { padding:8px 12px; border-radius:10px; border:1px solid #ffb347; background:#fff; cursor:pointer; transition:0.25s; }
+.toolbar button:hover { background:#ffb347; color:#fff; }
 .canvas { display:flex; justify-content:center; }
-#comicImage { max-width:100%; height:auto; border:1px solid #eee; border-radius:12px; background:#fff; }
+#comicImage { max-width:100%; height:auto; border:1px solid #ffe5b4; border-radius:12px; background:#fff; }
 
-/* 반응형 */
+/* ===== 만화 네비게이션 버튼 ===== */
+.canvas {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.comic-nav {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  background:#ffb347;
+  color:#fff;
+  border:none;
+  border-radius:50%;
+  width:40px;
+  height:40px;
+  font-size:20px;
+  cursor:pointer;
+  opacity:0.8;
+  transition:0.25s;
+  z-index:10;
+}
+.comic-nav:hover { opacity:1; }
+
+.comic-nav.left {
+  left: calc(260px + 20px); 
+} 
+.comic-nav.right {
+  right: 20px; 
+}
+
+#comicImage {
+  max-width:100%;
+  height:auto;
+  border:1px solid #ffe5b4;
+  border-radius:12px;
+  background:#fff;
+}
+
+
+/* ===== 반응형 ===== */
 @media (max-width: 900px) {
   .grid.three { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
