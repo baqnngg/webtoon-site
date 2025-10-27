@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>만화 읽기</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script defer src="js/main.js"></script>
+</head>
+<body>
+  
+<header class="site-header">
+  <a href="index.html"><img src="./image/logo.png" /></a>
+  <nav class="topnav">
+    <a href="index.html">홈</a>
+    <a href="about.html">자기소개</a>
+    <a href="works.html">자격증</a>
+    <a href="read.html">포트폴리오</a>
+    <a href="link.html">연락</a>
+  </nav>
+</header>
+
+  <div class="reader-wrap">
+    <aside id="sidebar" class="sidebar">
+      <div class="season-select">
+        <button data-season="1" class="season-btn">1학년</button>
+        <button data-season="2" class="season-btn">2학년</button>
+        <button data-season="3" class="season-btn">3학년</button>
+      </div>
+      <ul id="episodeList" class="episode-list"></ul>
+    </aside>
+    <main class="reader">
+      <div class="toolbar">
+        <span id="status">1학년</span>
+      </div>
+      <div class="canvas">
+        <button id="prevBtn" class="comic-nav left">&lt;</button>
+        <img id="comicImage" alt="comic page">
+        <button id="nextBtn" class="comic-nav right">&gt;</button>
+      </div>
+    </main>
+  </div>
+  
+<footer class="site-footer">
+  <small>©장병준</small>
+</footer>
+
+</body>
+</html>

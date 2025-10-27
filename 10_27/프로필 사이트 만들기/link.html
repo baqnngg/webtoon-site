@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>연락 - STUDIO PAN&AL</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .contact-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .contact-card {
+      flex: 1 1 250px;
+      padding: 20px;
+      border: 2px solid #222;
+      border-radius: 12px;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+      background-color: #f8f8f8;
+    }
+
+    .contact-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .contact-card h3 {
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+      color: #222;
+    }
+
+    .contact-card a {
+      text-decoration: none;
+      color: #0073e6;
+      font-weight: bold;
+    }
+
+    .contact-card a:hover {
+      text-decoration: underline;
+    }
+
+  </style>
+</head>
+<body>
+  
+<header class="site-header">
+  <a href="index.html"><img src="./image/logo.png" alt="STUDIO PAN&AL 로고" /></a>
+  <nav class="topnav">
+    <a href="index.html">홈</a>
+    <a href="about.html">자기소개</a>
+    <a href="works.html">자격증</a>
+    <a href="read.html">포트폴리오</a>
+    <a href="link.html">연락</a>
+  </nav>
+</header>
+
+<main class="container narrowe">
+  <h1>연락</h1>
+  <p>저와 연락하고 싶으신 분들은 아래 링크를 통해 편하게 메시지 보내주세요!</p>
+
+  <div class="contact-cards">
+    <div class="contact-card">
+      <h3>GitHub</h3>
+      <a href="https://github.com/baqnngg" target="_blank">github.com/baqnngg</a>
+    </div>
+
+    <div class="contact-card">
+      <h3>이메일</h3>
+      <a href="mailto:bbqdnrmas@gmail.com">bbqdnrmas@gmail.com</a>
+    </div>
+
+    <div class="contact-card">
+      <h3>Instagram</h3>
+      <a href="https://www.instagram.com/ni_mamei" target="_blank">@ni_mamei</a>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <small>©장병준</small>
+</footer>
+
+</body>
+</html>
