@@ -1,0 +1,69 @@
+
+/* 기본 레이아웃 */
+* { box-sizing: border-box; }
+body { margin:0; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; line-height: 1.5; }
+a { text-decoration: none; color: inherit; }
+
+.site-header { position: sticky; top:0; background:#222; color:#fff; padding:12px 16px; display:flex; align-items:center; gap:24px; z-index:10; }
+.logo a { color:#fff; }
+.topnav a { color:#ddd; margin-right:12px; padding:8px 10px; border-radius:10px; }
+.topnav a:hover { background:#444; color:#fff; }
+
+.site-footer { padding:24px 16px; color:#666; text-align:center; border-top:1px solid #eee; }
+
+.container { padding:24px 16px; max-width:1100px; margin:0 auto; }
+.container.narrow { max-width:800px; text-align:justify; }
+
+.profile { width:300px; height:300px; }
+
+.hero { padding:40px 24px; background:#f7f7f9; border-radius:16px; margin-bottom:15px; 
+background-image: url('../image/welcome.png'); background-position: bottom right;
+background-repeat: no-repeat;}
+
+.btn { display:inline-block; padding:10px 14px; border-radius:12px; border:1px solid #333; }
+.btn.subtle { border-color:#aaa; color:#333; }
+
+.grid { display:grid; gap:16px; }
+.grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+.card { border:1px solid #e5e5e5; border-radius:16px; padding:16px; background:#fff; min-height:500px; }
+/* .card.intro_author { background-image: url('../image/introduction_author_1.png'), url('../image/introduction_author_2.png');
+background-position: bottom left, bottom right;
+background-repeat: no-repeat;} */
+/* .card.intro_works{ background-image: url('../image/introduction_works.png'); background-position: bottom right; 
+  background-repeat: no-repeat;} */
+.card.season1_title{ background-image: url('../image/season1_title.png');
+  background-position: bottom; background-repeat: no-repeat;}
+.card.season2_title{ background-image: url('../image/season2_title.png');
+  background-position: bottom; background-repeat: no-repeat;}
+.card.season3_title{ background-image: url('../image/season3_title.png');
+  background-position: bottom; background-repeat: no-repeat;}
+
+    
+  /* 리더 레이아웃 */
+.reader-wrap { display:flex; min-height: calc(100vh - 120px); }
+.sidebar { width:260px; border-right:1px solid #eee; padding:12px; position:sticky; top:64px; height: calc(100vh - 64px); overflow:auto; background:#fafafa; }
+.season-select { display:flex; gap:8px; margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid silver; }
+.season-btn { width:calc(33.333% - 6px); padding:8px; border-radius:10px; border:1px solid #ccc; background:#fff; cursor:pointer; }
+.season-btn.active { background:#111; color:#fff; border-color:#111; }
+
+.episode-list { list-style:none; margin:0; padding:0; display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; }
+.episode-list li { border:1px solid #ddd; padding:6px 8px; text-align:center; border-radius:10px; background:#fff; cursor:pointer; font-size:14px; }
+.episode-list li.active { background:#111; color:#fff; border-color:#111; }
+
+.reader { flex:1; padding:12px 16px; }
+.toolbar { display:flex; justify-content:center; align-items:center; gap:16px; margin-bottom:12px; }
+.toolbar button { padding:8px 12px; border-radius:10px; border:1px solid #333; background:#fff; cursor:pointer; }
+.canvas { display:flex; justify-content:center; }
+#comicImage { max-width:100%; height:auto; border:1px solid #eee; border-radius:12px; background:#fff; }
+
+/* 반응형 */
+@media (max-width: 900px) {
+  .grid.three { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  .reader-wrap { flex-direction: column; }
+  .sidebar { position:relative; top:auto; height:auto; width:auto; border-right:none; }
+  .episode-list { grid-template-columns: repeat(6, 1fr); }
+}
